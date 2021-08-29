@@ -1,17 +1,13 @@
 import {
-  Alignment,
-  Navbar,
-  NavbarGroup,
-  NavbarHeading,
-  NavbarDivider,
-  Button,
+  Alignment, Button, Navbar, NavbarDivider, NavbarGroup,
+  NavbarHeading
 } from "@blueprintjs/core";
 import React, { Component } from "react";
 
 export default class NavComponent extends Component {
   render() {
     return (
-      <Navbar>
+      <Navbar style={{ background: "lightblue" }}>
         <NavbarGroup align={Alignment.LEFT}>
           <NavbarHeading>Travel Co</NavbarHeading>
           <NavbarDivider />

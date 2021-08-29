@@ -1,28 +1,25 @@
-import logo from "./logo.svg";
-import "./App.css";
+import React from "react";
 import Lorem from "react-lorem-component";
-import NavComponent from "./components/NavComponent";
-import HeadComponent from "./components/HeadComponent";
+import "./App.css";
 import ArticleComponent from "./components/ArticleComponent";
 import FootComponent from "./components/FootComponent";
+import HeadComponent from "./components/HeadComponent";
+import NavComponent from "./components/NavComponent";
 
 const data = [
   {
     title: "News 1",
-    description:
-      <Lorem count="1" />,
+    description: <Lorem count="1" />,
   },
   {
     title: "News 1",
-    description:
-      <Lorem count="1" />,
+    description: <Lorem count="1" />,
   },
   {
     title: "News 1",
-    description:
-      <Lorem count="1" />,
-  }
-]
+    description: <Lorem count="1" />,
+  },
+];
 
 function App() {
   const newsCard = ({ title, description }) => {
@@ -53,10 +50,10 @@ function App() {
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         {data.map(props => newsCard(props))}
       </div> */}
-      <NavComponent/>
-      <HeadComponent/>
-      <ArticleComponent/>
-      <FootComponent/>
+      <NavComponent />
+      <HeadComponent />
+      <ArticleComponent />
+      <FootComponent />
     </div>
   );
 }
