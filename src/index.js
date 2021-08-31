@@ -1,13 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import ClassApp from "./ClassApp";
 import App from "./App";
+import ClassApp from "./ClassApp";
+import FunctionalApp from "./FunctionalApp";
 import "./index.css";
 
 ReactDOM.render(
   <React.StrictMode>
-      <App />
-      <ClassApp />
+    <App />
+    <FunctionalApp />
+    <ClassApp />
   </React.StrictMode>,
   document.getElementById("root")
 );
