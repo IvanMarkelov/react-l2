@@ -40,3 +40,7 @@
 .marked {
   background-color: deeppink;
 }
+
+.car {
+  display: flex;
+}

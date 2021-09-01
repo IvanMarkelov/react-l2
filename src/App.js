@@ -12,6 +12,7 @@ function Car(props) {
     <div
       style={{
         border: "1px black solid",
+        borderRadius: "15px",
         maxWidth: "25%",
         padding: "5px 5px",
         margin: "5px 5px",
@@ -19,8 +20,10 @@ function Car(props) {
       className={classes.join(' ')}
       onClick={props.onMark}
     >
-      <h3>{props.car.name}</h3>
-      <p>{props.car.price}</p>
+      <img style={{maxWidth: "80%"}} src={props.car.imageSource} alt={props.car.name}/>
+      <h3>Наименование: {props.car.name}</h3>
+      <p>Стоимость проката/час: {props.car.price}</p>
+      <p>Уровень заряда: {props.car.chargeLevel}%</p>
     </div>
   );
 }
@@ -28,9 +31,12 @@ function Car(props) {
 class App extends Component {
   state = {
     cars: [
-      { marked: false, name: "BMW", price: 20000 },
-      { marked: false, name: "Mercedes", price: 15000 },
-      { marked: false, name: "Audi", price: 25000 },
+      { marked: false, imageSource: "./trollo.jpg", chargeLevel: 75, name: "Trollo", price: 200 },
+      { marked: false, imageSource: "./mgp.jpg", chargeLevel: 25, name: "MGP", price: 150 },
+      { marked: false, imageSource: "./swifty.jpg", chargeLevel: 90, name: "Swifty", price: 250 },
+      { marked: false, imageSource: "./foxpro.jpg", chargeLevel: 100, name: "FOX Pro", price: 250 },
+      { marked: false, imageSource: "./crops.png", chargeLevel: 80, name: "Crops", price: 230 },
+      { marked: false, imageSource: "./melon.jpg", chargeLevel: 40, name: "Melon", price: 200 },
     ],
   };
 
@@ -48,7 +54,7 @@ class App extends Component {
   render() {
     return this.state.cars.map((car) => {
       return (
-        <Car
+        <Car 
           car={car}
           key={car.name + Math.random()}
           onMark={this.handleMarked.bind(this, car.name)}
