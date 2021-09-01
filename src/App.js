@@ -3,19 +3,24 @@ import "./App.css";
 
 function Worker(props) {
 
-  const paymentHandler = () => {
+  const [dailySalary, setDailySalary] = React.useState(props.dailySalary);
+  const [daysClocked, setDaysClocked] = React.useState(props.daysClocked);
 
+  const changeSalary = (e) => {
+    setDailySalary(e.target.value);
   }
 
-  const [dailySalary, setDailySalary] = React.useState(props.dailySalary);
+  const changeDays = (e) => {
+    setDaysClocked(e.target.value);
+  }
 
   return (
     <tr>
       <td>{props.firstName}</td>
       <td>{props.lastName}</td>
-      <td><input onChange={paymentHandler} value={props.daysClocked}/></td>
-      <td><input onChange={() => setDailySalary(dailySalary)} /></td>
-      <td>{props.dailySalary * props.daysClocked}</td>
+      <td><input onChange={changeDays} value={daysClocked}/></td>
+      <td><input onChange={changeSalary} value={dailySalary} /></td>
+      <td>{dailySalary * daysClocked}</td>
     </tr>
   );
 }
@@ -77,14 +82,12 @@ class App extends Component {
     return payments;
   };
 
-  handleMarked(name) {
-    const cars = this.state.workers.concat();
-
-    const car = cars.find((c) => c.name === name);
-    car.marked = !car.marked;
+  handleTableChange = (e) => {
+    console.log(e);
+    const workers = this.state.workers;
 
     this.setState({
-      cars: cars,
+      workers: workers,
     });
   }
 
@@ -106,6 +109,7 @@ class App extends Component {
             {this.state.workers.map((worker) => {
               return (
                 <Worker
+                  onTableChange={this.handleTableChange}
                   firstName={worker.firstName}
                   lastName={worker.lastName}
                   dailySalary={worker.dailySalary}
