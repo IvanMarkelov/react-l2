@@ -2,30 +2,56 @@ import React, { Component } from "react";
 import "./App.css";
 
 function Worker(props) {
-
   const [dailySalary, setDailySalary] = React.useState(props.dailySalary);
   const [daysClocked, setDaysClocked] = React.useState(props.daysClocked);
 
   const changeSalary = (e) => {
     setDailySalary(e.target.value);
-  }
+    const fname = props.firstName;
+    const sname = props.lastName;
+    const days = props.daysClocked;
+    const sal = e.target.value;
+    props.onTableChange({
+      firstName: fname,
+      lastName: sname,
+      dailySalary: sal,
+      daysClocked: days,
+    });
+  };
 
   const changeDays = (e) => {
     setDaysClocked(e.target.value);
-  }
+    const fname = props.firstName;
+    const sname = props.lastName;
+    const days = e.target.value;
+    const sal = props.dailySalary;
+    props.onTableChange({
+      firstName: fname,
+      lastName: sname,
+      dailySalary: sal,
+      daysClocked: days,
+    });
+  };
 
   return (
     <tr>
       <td>{props.firstName}</td>
       <td>{props.lastName}</td>
-      <td><input onChange={changeDays} value={daysClocked}/></td>
-      <td><input onChange={changeSalary} value={dailySalary} /></td>
+      <td>
+        <input onChange={changeDays} value={daysClocked} />
+      </td>
+      <td>
+        <input onChange={changeSalary} value={dailySalary} />
+      </td>
       <td>{dailySalary * daysClocked}</td>
     </tr>
   );
 }
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+  }
   state = {
     workers: [
       {
@@ -82,14 +108,20 @@ class App extends Component {
     return payments;
   };
 
-  handleTableChange = (e) => {
-    console.log(e);
+  handleTableChange = (e, worker) => {
     const workers = this.state.workers;
-
+    console.log(workers);
+    const workerToReplace = workers.find(
+      w => {
+        return w.firstName === worker.firstName && w.lastName === worker.lastName;
+      }    
+    );
+    const index = workers.indexOf(workerToReplace);
+    workers[index] = worker;
     this.setState({
       workers: workers,
     });
-  }
+  };
 
   render() {
     return (
@@ -109,7 +141,7 @@ class App extends Component {
             {this.state.workers.map((worker) => {
               return (
                 <Worker
-                  onTableChange={this.handleTableChange}
+                  onTableChange={this.handleTableChange.bind(this, worker)}
                   firstName={worker.firstName}
                   lastName={worker.lastName}
                   dailySalary={worker.dailySalary}
