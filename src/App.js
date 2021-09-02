@@ -3,22 +3,33 @@ import "./App.css";
 
 class App extends Component {
   state = {
-    languages: ["html", "css", "js", "php"],
+    nums: [1, 3, 5, 11, 53, 4, 100],
   };
 
   populateList() {
-    return this.state.languages.map((language) => {
-      return <li>{language}</li>;
+    return this.state.nums.map((num) => {
+      return (
+        <span
+          key={num}
+          style={{
+            border: "3px solid black",
+            margin: "10px 10px",
+            padding: "10px 10px",
+          }}
+        >
+          {parseFloat(num) + 3}
+        </span>
+      );
     });
   }
 
   render() {
-    return <ul>
-      {
-        this.populateList()
-      }
-    </ul>
-
+    return (
+      <div>
+        <h3>{this.state.nums.join(", ")}</h3>
+        <h4>{this.populateList()}</h4>
+      </div>
+    );
   }
 }
 
