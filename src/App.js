@@ -7,6 +7,12 @@ class App extends Component {
     super(props);
 
     this.registerMove = this.registerMove.bind(this);
+    this.checkGameState = this.checkGameState.bind(this);
+    this.calculateResults = this.calculateResults.bind(this);
+    this.checkRow = this.checkRow.bind(this);
+    this.checkCol = this.checkCol.bind(this);
+    this.checkDiag = this.checkDiag.bind(this);
+    this.populateList = this.populateList.bind(this);
   }
 
   state = {
@@ -26,6 +32,8 @@ class App extends Component {
     currentPlayer: true,
     gameOver: false,
     gameWon: false,
+    winner: "No winner yet",
+    cellsFilled: 0,
   };
 
   registerMove(e) {
@@ -58,15 +66,40 @@ class App extends Component {
     this.checkRow(row);
     this.checkCol(col);
 
-    //   //const sum = parseFloat(row) + parseFloat(col);
+    const sum = parseFloat(row) + parseFloat(col);
 
-    //   if (sum === 2 || sum === 0) {
-    //  //   checkDiag(row, col);
-    //   }
+    if (sum === 2 || sum === 0) {
+      this.checkDiag(row, col);
+    }
 
     this.setState({
-      currentPlayer: !this.state.currentPlayer,
+      cellsFilled: this.state.cellsFilled + 1,
     });
+
+    this.calculateResults();
+  }
+
+  calculateResults() {
+    console.log(this.state.gameWon);
+
+    if (this.state.gameWon) {
+      const winner = this.state.currentPlayer
+        ? this.player1.name
+        : this.player2.name;
+      this.setState({
+        gameOver: true,
+        winner,
+      });
+    } else if (!this.state.gameWon && this.state.cellsFilled == 9) {
+      this.setState({
+        gameOver: true,
+        winner: "Draw",
+      });
+    } else {
+      this.setState({
+        currentPlayer: !this.state.currentPlayer,
+      });
+    }
   }
 
   checkRow(row) {
@@ -77,9 +110,14 @@ class App extends Component {
         rowIsCompleted = false;
       }
     }
-    this.setState({
-      gameWon: rowIsCompleted,
-    });
+    if (rowIsCompleted) {
+      this.setState({
+        gameWon: rowIsCompleted,
+      });
+      console.log(this);
+      console.log("Right after setting State: " + this.state.gameWon);
+      console.log(this.state);
+    }
   }
 
   checkCol(col) {
@@ -94,33 +132,32 @@ class App extends Component {
         }
       }
     }
-    console.log("game is won? " + colIsCompleted);
-    this.setState({
-      gameWon: colIsCompleted,
-    });
+    if (colIsCompleted) {
+      this.setState({
+        gameWon: colIsCompleted,
+      });
+    }
   }
-  //   checkCol = (col) => {
-  //     console.log("Field Row amount: " + field.length);
-  //     console.log("Field column amount: " + field[0].length);
-  //     console.log("Item value: " + field[0][0]);
-  //     let colIsCompleted = true;
-  //     for (let i = 0; i < field.length - 1; i++) {
-  //       for (let j = 0; j < field[i].length; j++) {
-  //         if (j === col) {
-  //           console.log("j = col");
-  //           console.log("i" + field[i][j]);
-  //           console.log("i+1" + field[i + 1][j]);
-  //           console.log(field[i][j] === field[i + 1][j]);
-  //           console.log(
-  //             "colIsComp" + (colIsCompleted = field[i][j] === field[i + 1][j])
-  //           );
-  //           colIsCompleted = field[i][j] === field[i + 1][j];
-  //         }
-  //       }
-  //     }
-  //     return colIsCompleted;
-  //   };
-  // }
+
+  checkDiag(row, col) {
+    const tempField = this.state.field;
+    let diagIsCompleted = false;
+    if (
+      (tempField[row][col] === tempField[1][1] &&
+        tempField[row][col] === tempField[2][2] &&
+        tempField[row][col] === tempField[0][0]) ||
+      (tempField[row][col] === tempField[1][1] &&
+        tempField[row][col] === tempField[0][2] &&
+        tempField[row][col] === tempField[2][0])
+    ) {
+      diagIsCompleted = true;
+    }
+    if (diagIsCompleted) {
+      this.setState({
+        gameWon: diagIsCompleted,
+      });
+    }
+  }
 
   populateList() {
     return this.state.field.map((row, index) => {
