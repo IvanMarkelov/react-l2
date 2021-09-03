@@ -84,8 +84,8 @@ class App extends Component {
 
     if (this.state.gameWon) {
       const winner = this.state.currentPlayer
-        ? this.player1.name
-        : this.player2.name;
+        ? this.state.player1.name
+        : this.state.player2.name;
       this.setState({
         gameOver: true,
         winner,
@@ -114,9 +114,6 @@ class App extends Component {
       this.setState({
         gameWon: rowIsCompleted,
       });
-      console.log(this);
-      console.log("Right after setting State: " + this.state.gameWon);
-      console.log(this.state);
     }
   }
 
