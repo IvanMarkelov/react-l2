@@ -56,7 +56,7 @@ class App extends Component {
     const rowArr = tempField[row];
 
     this.checkRow(row);
-    //this.checkCol(col);
+    this.checkCol(col);
 
     //   //const sum = parseFloat(row) + parseFloat(col);
 
@@ -83,19 +83,44 @@ class App extends Component {
   }
 
   checkCol(col) {
+    const tempField = this.state.field;
     let colIsCompleted = true;
-    for (let i = 0; i < this.state.field.length - 1; i++) {
-      for (let j = 0; j < this.state.field[i].length; j++) {
-        if (j === col) {
-          colIsCompleted =
-            this.state.field[i][j] === this.state.field[i + 1][j];
+    for (let i = 1; i < tempField.length; i++) {
+      for (let j = 0; j < tempField[i].length; j++) {
+        if (parseFloat(j) === parseFloat(col)) {
+          if (tempField[i - 1][j] !== tempField[i][j]) {
+            colIsCompleted = false;
+          }
         }
       }
     }
+    console.log("game is won? " + colIsCompleted);
     this.setState({
       gameWon: colIsCompleted,
     });
   }
+  //   checkCol = (col) => {
+  //     console.log("Field Row amount: " + field.length);
+  //     console.log("Field column amount: " + field[0].length);
+  //     console.log("Item value: " + field[0][0]);
+  //     let colIsCompleted = true;
+  //     for (let i = 0; i < field.length - 1; i++) {
+  //       for (let j = 0; j < field[i].length; j++) {
+  //         if (j === col) {
+  //           console.log("j = col");
+  //           console.log("i" + field[i][j]);
+  //           console.log("i+1" + field[i + 1][j]);
+  //           console.log(field[i][j] === field[i + 1][j]);
+  //           console.log(
+  //             "colIsComp" + (colIsCompleted = field[i][j] === field[i + 1][j])
+  //           );
+  //           colIsCompleted = field[i][j] === field[i + 1][j];
+  //         }
+  //       }
+  //     }
+  //     return colIsCompleted;
+  //   };
+  // }
 
   populateList() {
     return this.state.field.map((row, index) => {
