@@ -7,40 +7,35 @@ class App extends Component {
     super(props);
 
     this.registerMove = this.registerMove.bind(this);
-    this.checkGameState = this.checkGameState.bind(this);
-    this.calculateResults = this.calculateResults.bind(this);
-    this.checkRow = this.checkRow.bind(this);
-    this.checkCol = this.checkCol.bind(this);
-    this.checkDiag = this.checkDiag.bind(this);
-    this.populateList = this.populateList.bind(this);
+    this.state = {
+      field: [
+        ["", "", ""],
+        ["", "", ""],
+        ["", "", ""],
+      ],
+      player1: {
+        name: "Player 1",
+        mark: "X",
+      },
+      player2: {
+        name: "Player 2",
+        mark: "0",
+      },
+      currentPlayer: true,
+      gameOver: false,
+      gameWon: false,
+      winner: "No winner yet",
+      cellsFilled: 0,
+      showNewGameButton: false,
+      isFieldBlocked: false,
+    };
   }
 
-  state = {
-    field: [
-      ["", "", ""],
-      ["", "", ""],
-      ["", "", ""],
-    ],
-    player1: {
-      name: "Player 1",
-      mark: "X",
-    },
-    player2: {
-      name: "Player 2",
-      mark: "0",
-    },
-    currentPlayer: true,
-    gameOver: false,
-    gameWon: false,
-    winner: "No winner yet",
-    cellsFilled: 0,
-  };
-
   registerMove(e) {
-    console.log(e.target.parentElement.getAttribute("index"));
-    console.log(e.target.getAttribute("index"));
     const row = e.target.parentElement.getAttribute("index");
     const col = e.target.getAttribute("index");
+    e.target.setAttribute("disabled", true);
+
     let tempField = this.state.field;
     tempField.map((element, index) => {
       if (parseFloat(index) === parseFloat(row)) {
@@ -54,46 +49,53 @@ class App extends Component {
         });
       }
     });
-    e.target.setAttribute("disabled", true);
-    this.checkGameState(row, col);
+    let movesMade = this.state.cellsFilled + 1;
+    this.setState({
+      cellsFilled: movesMade,
+    });
+    this.checkGameState(row, col, movesMade);
   }
 
-  checkGameState(row, col) {
-    const tempField = this.state.field;
-
-    const rowArr = tempField[row];
-
-    this.checkRow(row);
-    this.checkCol(col);
-
+  checkGameState = (row, col, movesMade) => {
+    let isGameWon = this.state.gameWon;
     const sum = parseFloat(row) + parseFloat(col);
 
-    if (sum === 2 || sum === 0) {
-      this.checkDiag(row, col);
+    if (movesMade >= 5) {
+      if (!isGameWon) {
+        isGameWon = this.checkRow(row);
+      }
+      if (!isGameWon) {
+        isGameWon = this.checkCol(col);
+      }
+      if (!isGameWon && (sum === 2 || sum === 0)) {
+        isGameWon = this.checkDiag(row, col);
+      }
     }
 
-    this.setState({
-      cellsFilled: this.state.cellsFilled + 1,
-    });
+    this.calculateResults(isGameWon, movesMade);
+  };
 
-    this.calculateResults();
-  }
+  calculateResults(isGameWon, movesMade) {
+    let isGameOver = false;
+    if (isGameWon || movesMade >= 9) {
+      isGameOver = true;
+    }
 
-  calculateResults() {
-    console.log(this.state.gameWon);
-
-    if (this.state.gameWon) {
-      const winner = this.state.currentPlayer
-        ? this.state.player1.name
-        : this.state.player2.name;
+    if (isGameOver) {
+      let winner;
+      if (isGameWon) {
+        winner = this.state.currentPlayer
+          ? this.state.player1.name
+          : this.state.player2.name;
+      } else {
+        winner = "It's a draw";
+      }
       this.setState({
-        gameOver: true,
+        gameOver: isGameOver,
+        gameWon: isGameWon,
         winner,
-      });
-    } else if (!this.state.gameWon && this.state.cellsFilled == 9) {
-      this.setState({
-        gameOver: true,
-        winner: "Draw",
+        showNewGameButton: true,
+        isFieldBlocked: true,
       });
     } else {
       this.setState({
@@ -110,11 +112,7 @@ class App extends Component {
         rowIsCompleted = false;
       }
     }
-    if (rowIsCompleted) {
-      this.setState({
-        gameWon: rowIsCompleted,
-      });
-    }
+    return rowIsCompleted;
   }
 
   checkCol(col) {
@@ -129,11 +127,7 @@ class App extends Component {
         }
       }
     }
-    if (colIsCompleted) {
-      this.setState({
-        gameWon: colIsCompleted,
-      });
-    }
+    return colIsCompleted;
   }
 
   checkDiag(row, col) {
@@ -149,24 +143,28 @@ class App extends Component {
     ) {
       diagIsCompleted = true;
     }
-    if (diagIsCompleted) {
-      this.setState({
-        gameWon: diagIsCompleted,
-      });
-    }
+    return diagIsCompleted;
   }
 
   populateList() {
     return this.state.field.map((row, index) => {
       return (
-        <div className="row" key={index} index={index}>
+        <div
+          className="row"
+          style={{ display: "flex", alignContent: "center" }}
+          key={index}
+          index={index}
+        >
           {row.map((cell, index) => {
             return (
               <button
                 className="cell"
                 key={index}
                 index={index}
+                disabled={this.state.isFieldBlocked}
                 style={{
+                  minWidth: "40px",
+                  minHeight: "40px",
                   border: "1px solid black",
                   padding: "10px 10px",
                 }}
@@ -181,10 +179,45 @@ class App extends Component {
     });
   }
 
+  blockField = () => {
+    this.setState({
+      isFieldBlocked: true,
+    });
+  };
+
+  startNewGame = () => {
+    let tempField = this.clearField();
+    this.setState({
+      field: tempField,
+      currentPlayer: true,
+      gameOver: false,
+      gameWon: false,
+      winner: "No winner yet",
+      cellsFilled: 0,
+      showNewGameButton: false,
+      isFieldBlocked: false,
+    });
+  };
+
+  clearField() {
+    let tempField = this.state.field;
+    for (let i = 0; i < tempField.length; i++) {
+      for (let j = 0; j < tempField[i].length; j++) {
+        tempField[i][j] = "";
+      }
+    }
+    return tempField;
+  }
+
   render() {
+    console.log(this.state);
     return (
-      <div>
+      <div style={{ position: "absolute", left: "50%" }}>
         <h4>{this.populateList()}</h4>
+        {this.state.showNewGameButton && (
+          <button onClick={this.startNewGame}>Start New Game</button>
+        )}
+        {this.state.gameOver && <h4>And the winner is: {this.state.winner}</h4>}
       </div>
     );
   }
